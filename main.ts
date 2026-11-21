@@ -12,6 +12,13 @@
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
+// Night Market — Cari Bedanya! (best-game-01 entry, overtheraa)
+// A spot-the-difference game set in a night market: 4 hand-drawn scenes
+// (satay stall, lantern alley, fruit cart, toy stall), each hiding 5
+// differences to find against the clock. main.ts is the entrypoint that
+// hands the game in: it copies game/ and screenshots/ next to this file
+// into /output (or $MAKEFUN_OUTPUT_DIR) and writes dossier.json there,
+// the summary the judge reads.
 import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -21,6 +28,7 @@ const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
 mkdirSync(out, { recursive: true });
+console.log('Night Market — Cari Bedanya! copying game/ and screenshots/ to', out);
 cpSync(join(here, 'game'), join(out, 'game'), { recursive: true });
 mkdirSync(join(out, 'screenshots'), { recursive: true });
 if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
@@ -29,6 +37,9 @@ if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), joi
 // scorer would refuse (more than 4 screenshots or one over 256 KiB; more than 993 files in game/ or 48 MiB of game
 // files, in all, or a path under game/ over 1000 bytes: game/ counts beside /output's own 1000-entry cap, its
 // screenshots/ and dossier.json).
+// Caps picked for this entry: 4 screenshots max at 256 KiB each (the night-market
+// scenes are small PNGs), game/ capped at 993 files / 48 MiB, and a 160 KiB text budget
+// for the dossier — generous enough for 4 scenes, tight enough to stay inside the gate.
 writeFileSync(
   join(out, 'dossier.json'),
   buildDossier(out, {
